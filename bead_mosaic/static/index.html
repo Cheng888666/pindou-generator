@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼豆图纸生成器</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- 顶部 -->
+    <header class="header">
+
+        <div>
+            <h1>拼豆图纸生成器</h1>
+            <p>Image → Mosaic → Bead Pattern</p>
+        </div>
+
+        <div class="header-status">
+            <span class="status-dot"></span>
+            前端预览模式
+        </div>
+
+    </header>
+
+
+    <!-- 主体 -->
+    <main class="main">
+
+        <!-- 左侧控制区 -->
+        <aside class="control-panel">
+
+            <!-- 上传图片 -->
+            <section class="panel-section">
+
+                <h2>① 上传图片</h2>
+
+                <div class="upload-area" id="uploadArea">
+
+                    <div class="upload-icon">＋</div>
+
+                    <div class="upload-title">
+                        拖入图片到这里
+                    </div>
+
+                    <div class="upload-subtitle">
+                        支持 JPG、PNG、WEBP
+                    </div>
+
+                    <button
+                        class="secondary-button"
+                        id="selectButton">
+                        选择图片
+                    </button>
+
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/jpeg,image/png,image/webp"
+                        hidden>
+
+                </div>
+
+                <div class="file-info" id="fileInfo">
+
+                    <div
+                        class="file-name"
+                        id="fileName">
+                        未选择图片
+                    </div>
+
+                    <div
+                        class="file-size"
+                        id="fileSize">
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 图纸设置 -->
+            <section class="panel-section">
+
+                <h2>② 图纸设置</h2>
+
+                <div class="form-group">
+
+                    <label for="width">
+                        拼豆宽度
+                        <span class="unit">格</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="width"
+                        value="100"
+                        min="10"
+                        max="500">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="height">
+                        拼豆高度
+                        <span class="auto-label">自动</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="height"
+                        placeholder="根据比例计算"
+                        min="10"
+                        max="500">
+
+                </div>
+
+
+                <div class="checkbox-group">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="keepRatio"
+                            checked>
+
+                        <span class="custom-checkbox"></span>
+
+                        保持图片比例
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="colorCount">
+                        颜色数量
+                    </label>
+
+                    <select id="colorCount">
+
+                        <option value="24">
+                            24 色
+                        </option>
+
+                        <option value="48">
+                            48 色
+                        </option>
+
+                        <option value="64">
+                            64 色
+                        </option>
+
+                        <option value="96">
+                            96 色
+                        </option>
+
+                        <option value="128">
+                            128 色
+                        </option>
+
+                        <option
+                            value="221"
+                            selected>
+                            221 色（MARD）
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="colorSet">
+                        拼豆色卡
+                    </label>
+
+                    <select id="colorSet">
+
+                        <option
+                            value="mard221"
+                            selected>
+                            MARD 221
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+
+            <!-- 生成图纸 -->
+            <section class="panel-section">
+
+                <h2>③ 生成图纸</h2>
+
+                <button
+                    class="generate-button"
+                    id="generateButton">
+
+                    <span>✦</span>
+                    开始生成
+
+                </button>
+
+                <div
+                    class="progress-container"
+                    id="progressContainer">
+
+                    <div class="progress-header">
+
+                        <span>
+                            处理中...
+                        </span>
+
+                        <span id="progressText">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress-fill"
+                            id="progressFill">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </aside>
+
+
+        <!-- 右侧工作区 -->
+        <section class="workspace">
+
+            <!-- 预览区域 -->
+            <section class="preview-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <h2>
+                            图片预览
+                        </h2>
+
+                        <p>
+                            生成结果将在这里显示
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="reset-button"
+                        id="resetButton">
+                        重置
+                    </button>
+
+                </div>
+
+
+                <div class="preview-grid">
+
+                    <!-- 原图 -->
+                    <div class="preview-card">
+
+                        <div class="preview-card-header">
+
+                            <span>
+                                原图
+                            </span>
+
+                            <span class="preview-tag">
+                                Original
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="preview-content empty-preview"
+                            id="originalPreview">
+
+                            <div class="empty-icon">
+                                ◫
+                            </div>
+
+                            <div>
+                                等待上传图片
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 马赛克 -->
+                    <div class="preview-card">
+
+                        <div class="preview-card-header">
+
+                            <span>
+                                马赛克
+                            </span>
+
+                            <span class="preview-tag">
+                                Mosaic
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="preview-content empty-preview"
+                            id="mosaicPreview">
+
+                            <div class="empty-icon">
+                                ▦
+                            </div>
+
+                            <div>
+                                等待生成
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 拼豆图纸 -->
+                    <div class="preview-card pattern-card">
+
+                        <div class="preview-card-header">
+
+                            <span>
+                                拼豆图纸
+                            </span>
+
+                            <span class="preview-tag">
+                                Pattern
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="preview-content pattern-preview"
+                            id="patternPreview">
+
+                            <canvas id="patternCanvas"></canvas>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 统计 -->
+            <section class="statistics-section">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <h2>
+                            颜色统计
+                        </h2>
+
+                        <p>
+                            当前图纸所需拼豆数量
+                        </p>
+
+                    </div>
+
+                    <div class="total-beads">
+
+                        <span>
+                            总数量
+                        </span>
+
+                        <strong id="totalBeads">
+                            0
+                        </strong>
+
+                        <span>
+                            颗
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="color-list"
+                    id="colorList">
+
+                    <div class="empty-statistics">
+                        生成图纸后显示颜色统计
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 下载 -->
+            <section class="download-section">
+
+                <h2>
+                    导出图纸
+                </h2>
+
+                <div class="download-buttons">
+
+                    <button
+                        class="download-button"
+                        id="downloadPng">
+
+                        <span class="download-icon">
+                            ↓
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                PNG 图纸
+                            </strong>
+
+                            <small>
+                                高清图片
+                            </small>
+
+                        </div>
+
+                    </button>
+
+
+                    <button
+                        class="download-button"
+                        id="downloadPdf">
+
+                        <span class="download-icon">
+                            ↓
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                PDF 图纸
+                            </strong>
+
+                            <small>
+                                适合打印
+                            </small>
+
+                        </div>
+
+                    </button>
+
+
+                    <button
+                        class="download-button"
+                        id="downloadExcel">
+
+                        <span class="download-icon">
+                            ↓
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Excel 清单
+                            </strong>
+
+                            <small>
+                                材料统计
+                            </small>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- 底部 -->
+    <footer>
+
+        <span>
+            Bead Mosaic Generator
+        </span>
+
+        <span>
+            Frontend Prototype v1.0
+        </span>
+
+    </footer>
+
+</div>
+
+
+<!-- PDF 导出库 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- 主程序 -->
+<script src="app.js"></script>
+
+</body>
+</html>
