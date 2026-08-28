@@ -28,7 +28,6 @@ def load_color_database():
 
     color_file = os.path.join(
         root,
-        "data",
         "mard_221.json"
     )
 
